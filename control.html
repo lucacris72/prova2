@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+  </head>
+  <body>
+    <p>
+      <button id='up' class='btn btn-default'>Channel Up</button>
+      <button id='down' class='btn btn-default'>Channel Down</button>
+    </p>
+    <p id='channels-chooser'></p>
+
+    <script src="hosted.js"></script>
+    <script>
+      ib.setDefaultStyle();
+
+      document.getElementById('up').addEventListener('click', function(evt) {
+        ib.sendCommand("channel/up");
+      });
+
+      document.getElementById('down').addEventListener('click', function(evt) {
+        ib.sendCommand("channel/down");
+      });
+
+      ib.ready.then(function() {
+        var container = document.getElementById('channels-chooser');
+        if (ib.config.channels.length == 0) {
+          var info = document.createElement("em");
+          info.appendChild(document.createTextNode("No channels configured for this setup."));
+          container.appendChild(info);
+          return;
+        }
+
+        for (var channel_id in ib.config.channels) {
+          var channel_name = ib.config.channels[channel_id].name;
+
+          var btn = document.createElement("button");
+          btn.appendChild(document.createTextNode(channel_name));
+          btn.classList.add('btn');
+          btn.classList.add('btn-default');
+          let payload = (parseInt(channel_id)+1).toString();
+          btn.addEventListener('click', function(evt) {
+            ib.sendCommand("channel/id", payload);
+          });
+          container.appendChild(btn);
+          container.appendChild(document.createTextNode(" "));
+        }
+      })
+    </script>
+  </body>
+</html>
